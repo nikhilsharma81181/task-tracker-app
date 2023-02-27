@@ -23,12 +23,15 @@ class LoginService {
 
   Future<Response?> signUp(String name, email, pass) async {
     try {
+      log("signUp 1 $name, $email, $pass");
       Response res = await Dio().post("$endPoint/user/register", data: {
         "name": name,
         "email": email,
         "pass": pass,
       });
+      log("signUp 11");
       log(res.data.toString());
+      log("signUp 111");
       return res;
     } catch (e) {
       log(e.toString());

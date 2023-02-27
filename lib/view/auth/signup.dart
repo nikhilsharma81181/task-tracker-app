@@ -113,14 +113,22 @@ class _SignUpState extends State<SignUp> {
                 if (_formKey.currentState!.validate()) {
                   if (_passwordCtrl.text == _rePasswordCtrl.text) {
                     if (!isLoading) {
-                      setState(() => isLoading = true);
+                      // setState(() => isLoading = true);
                       final userProv = context.read<UserProvider>();
                       final nav = Navigator.of(context);
                       String res = await userProv.signUp(
                           _nameCtrl.text, _emailCtrl.text, _passwordCtrl.text);
-                      if (res != 'Invalid' && res != "") {
+                      if (res != 'Invalid' &&
+                          res != "" &&
+                          res != "User Exists") {
                         nav.pushReplacement(MaterialPageRoute(
                             builder: (context) => const Homepage()));
+                      }
+                      if (res == "User Exists") {
+                        setState(() {
+                          invalidCredential = true;
+                          invalidText = "User Already Exists";
+                        });
                       } else {
                         setState(() {
                           invalidCredential = true;

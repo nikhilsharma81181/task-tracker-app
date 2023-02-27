@@ -14,9 +14,6 @@ class UserProvider extends ChangeNotifier {
   String userName = '';
   String userEmail = '';
 
-  // String endPoint = "https://courageous-baseball-cap-hare.cyclic.app";
-  String endPoint = "http://localhost:8080";
-
   Future<String> logIn(String email, pass) async {
     Response? res = await loginService.logIn(email, pass);
     log(res.toString());
@@ -24,13 +21,16 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<String> signUp(String name, email, pass) async {
+    log("signUp 2");
     Response? res = await loginService.signUp(name, email, pass);
     return processResponse(res);
   }
 
   String processResponse(Response? res) {
     log("111;  $res");
-    if (res != null && res.data['msg'] != "Invalid") {
+    if (res != null &&
+        res.data['msg'] != "Invalid" &&
+        res.data['msg'] != "User Exists") {
       log(res.toString());
       userToken = res.data['token'];
       userName = res.data['user']['name'];
@@ -43,6 +43,9 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
       log("222;  $res");
       return res.data['msg'];
+    }
+    if (res != null && res.data['msg'] == "User Exists") {
+      return "User Exists";
     } else {
       log("Invalid Cred");
       return "Invalid";
