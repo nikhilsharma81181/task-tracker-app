@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 customDialog(BuildContext context, int seconds) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (_) => Dialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,

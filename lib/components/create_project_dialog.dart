@@ -12,7 +12,16 @@ import 'color_picker.dart';
 import 'custom_btn.dart';
 
 class CreateProjectDialog extends StatefulWidget {
-  const CreateProjectDialog({super.key});
+  final String? projectId;
+  final bool isCreate;
+  final String? text;
+  final String? colorCode;
+  const CreateProjectDialog(
+      {super.key,
+      required this.isCreate,
+      this.text = "",
+      this.colorCode = "",
+      this.projectId = ""});
 
   @override
   State<CreateProjectDialog> createState() => _CreateProjectDialogState();
@@ -21,6 +30,20 @@ class CreateProjectDialog extends StatefulWidget {
 class _CreateProjectDialogState extends State<CreateProjectDialog> {
   TextEditingController textCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  List<Map> colors = projectColors;
+
+  @override
+  void initState() {
+    for (int i = 0; i < projectColors.length; i++) {
+      if (projectColors[i]['color'] == widget.colorCode) {
+        context.read<ProjectProvider>().selectColor(i);
+      }
+    }
+    setState(() {
+      textCtrl.text = widget.text ?? '';
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +65,7 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create Project',
+                  widget.isCreate ? 'Create Project' : 'Update Project',
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1
@@ -70,32 +93,45 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
                 CustomBtn(
                   width: width,
                   height: 45,
-                  text: 'Create',
+                  text: widget.isCreate ? 'Create' : 'Update',
                   borderRadius: 8,
                   btnColor: kscaffoldColor,
                   fn: () async {
                     final nav = Navigator.of(context);
                     if (_formKey.currentState!.validate()) {
-                      String projectId = await prov.createProject(
-                        userProv.userId,
-                        userProv.userToken,
-                        textCtrl.text,
-                        projectColor,
-                      );
-                      log("step1");
-                      if (projectId != "") {
-                        prov.resetColor();
-                        nav.pop();
-                        nav.push(
-                          MaterialPageRoute(
-                            builder: (context) => ProjectDetails(
-                              projectId: projectId,
-                              projectIndex: 0,
-                              projectData: null,
-                              name: textCtrl.text,
-                            ),
-                          ),
+                      if (widget.isCreate) {
+                        String projectId = await prov.createProject(
+                          userProv.userId,
+                          userProv.userToken,
+                          textCtrl.text,
+                          projectColor,
                         );
+                        log("step1");
+                        if (projectId != "") {
+                          prov.resetColor();
+                          nav.pop();
+                          nav.push(
+                            MaterialPageRoute(
+                              builder: (context) => ProjectDetails(
+                                projectId: projectId,
+                                projectIndex: 0,
+                                projectData: null,
+                                name: textCtrl.text,
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        bool success = await prov.updateProject(
+                          widget.projectId ?? "",
+                          userProv.userToken,
+                          userProv.userId,
+                          textCtrl.text,
+                          projectColor,
+                        );
+                        if (success) {
+                          nav.pop();
+                        }
                       }
                     }
                   },

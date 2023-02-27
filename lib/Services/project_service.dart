@@ -43,4 +43,36 @@ class ProjectService {
       return null;
     }
   }
+
+  Future<bool> deleteProject(String projectId, token) async {
+    try {
+      Response res = await Dio().delete('$endPoint/projects/$projectId',
+          options: Options(headers: {
+            "authorization": token,
+          }));
+      if (res.statusCode != 200) return false;
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> updateProject(String projectId, token, name, color) async {
+    try {
+      Response res = await Dio().patch('$endPoint/projects/$projectId',
+          data: {
+            "name": name,
+            "color": color,
+          },
+          options: Options(headers: {
+            "authorization": token,
+          }));
+      if (res.statusCode != 200) return false;
+      return true;
+    } catch (e) {
+      log(e.toString());
+      return false;
+    }
+  }
 }

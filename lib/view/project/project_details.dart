@@ -38,6 +38,10 @@ class _ProjectDetailsState extends State<ProjectDetails> {
   TaskService taskService = TaskService();
   bool isFetching = true;
 
+  CarouselController pageCtrl = CarouselController();
+  Offset _offset = Offset.zero;
+  final _key = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final userProv = context.watch<UserProvider>();
@@ -45,6 +49,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
     return Scaffold(
       backgroundColor: kscaffoldColor,
       appBar: appBar(),
+      key: _key,
       body: Consumer<TaskProvider>(
         builder: (context, prov, child) {
           if (isFetching) {
@@ -65,9 +70,10 @@ class _ProjectDetailsState extends State<ProjectDetails> {
               options: CarouselOptions(
                 height: height,
                 enableInfiniteScroll: false,
-                viewportFraction: 0.9,
+                viewportFraction: 0.8,
                 onPageChanged: (index, reason) {},
               ),
+              carouselController: pageCtrl,
             );
           } else {
             return const Center(
@@ -219,7 +225,7 @@ class _ProjectDetailsState extends State<ProjectDetails> {
     return Container(
       height: 74,
       width: width * 0.9,
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(17),
         color: kCardColor,
@@ -307,8 +313,10 @@ class _ProjectDetailsState extends State<ProjectDetails> {
       actions: [
         IconButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Statistics(tasks: taskProv.tasks)));
+            if (taskProv.tasks != null && taskProv.tasks!.isNotEmpty) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Statistics(tasks: taskProv.tasks)));
+            }
           },
           icon: const Icon(
             Icons.pie_chart_rounded,
@@ -319,14 +327,17 @@ class _ProjectDetailsState extends State<ProjectDetails> {
           padding: const EdgeInsets.only(right: 10),
           child: IconButton(
             onPressed: () async {
-              bool success = await taskService.getCSV(
-                userProv.userId,
-                widget.projectId,
-                userProv.userToken,
-              );
-              if (success) {
-                // ignore: use_build_context_synchronously
-                customDialog(context, 2);
+              if (taskProv.tasks != null && taskProv.tasks!.isNotEmpty) {
+                bool success = await taskService.getCSV(
+                  userProv.userId,
+                  widget.projectId,
+                  userProv.userToken,
+                  widget.projectData!.name,
+                );
+                if (success) {
+                  // ignore: use_build_context_synchronously
+                  customDialog(context, 2);
+                }
               }
             },
             icon: const Icon(

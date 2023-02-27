@@ -97,7 +97,8 @@ class TaskService {
     }
   }
 
-  Future<bool> getCSV(String userId, String projectId, token) async {
+  Future<bool> getCSV(
+      String userId, String projectId, token, projectName) async {
     try {
       Response res = await Dio().get("$endPoint/stats/$userId/$projectId",
           options: Options(headers: {
@@ -105,7 +106,8 @@ class TaskService {
           }));
       if (res.statusCode == 200) {
         log(res.data.toString());
-        bool success = await saveBase64StringAsFile(res.data['csv']);
+        bool success =
+            await saveBase64StringAsFile(projectName, res.data['csv']);
         log(success.toString());
         return success;
       } else {
@@ -116,14 +118,17 @@ class TaskService {
     }
   }
 
-  Future<bool> saveBase64StringAsFile(String base64String) async {
+  Future<bool> saveBase64StringAsFile(
+      String projectName, String base64String) async {
     String downloadPath = "/storage/emulated/0/Download";
+    String name = "$projectName-tasks.csv";
+    String newDownloadPath = "$downloadPath/$projectName-tasks.csv";
     final dir = Directory(downloadPath);
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
-    final file = File("$downloadPath/tasks.csv");
-    log("$downloadPath/tasks.csv");
+    final file = File(newDownloadPath);
+    log(name);
     await file.writeAsBytes(base64Decode(base64String));
     log('downloaded');
     return true;

@@ -59,51 +59,55 @@ class _StatisticsState extends State<Statistics> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: Stack(
-        children: [
-          ListView(
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: PieChart(
-                  PieChartData(
-                    borderData: FlBorderData(show: false),
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 100,
-                    startDegreeOffset: 10,
-                    sections: showingSections(chartData, taskData),
+      body: chartData.isEmpty
+          ? Center(
+              child: const Text('No time data found'),
+            )
+          : Stack(
+              children: [
+                ListView(
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1,
+                      child: PieChart(
+                        PieChartData(
+                          borderData: FlBorderData(show: false),
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 80,
+                          startDegreeOffset: 10,
+                          sections: showingSections(chartData, taskData),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    for (var i = 0; i < barGraphData.length; i++)
+                      barData(
+                        barGraphData[i]['name'],
+                        barGraphData[i]['duration'],
+                        barGraphData[i]['color'],
+                      ),
+                    const SizedBox(height: 70),
+                  ],
+                ),
+                Positioned(
+                  bottom: 0,
+                  width: width,
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.01),
+                          Colors.black,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              for (var i = 0; i < barGraphData.length; i++)
-                barData(
-                  barGraphData[i]['name'],
-                  barGraphData[i]['duration'],
-                  barGraphData[i]['color'],
-                ),
-              const SizedBox(height: 70),
-            ],
-          ),
-          Positioned(
-            bottom: 0,
-            width: width,
-            child: Container(
-              height: 120,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.01),
-                    Colors.black,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

@@ -73,7 +73,9 @@ class _HomepageState extends State<Homepage> {
             context.read<ProjectProvider>().resetColor();
             showDialog(
               context: context,
-              builder: (context) => const CreateProjectDialog(),
+              builder: (context) => const CreateProjectDialog(
+                isCreate: true
+              ),
             );
           },
         ),

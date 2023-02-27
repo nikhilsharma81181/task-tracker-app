@@ -20,11 +20,23 @@ class ProjectProvider extends ChangeNotifier {
   Future<String> createProject(String userId, token, name, colorCode) async {
     String projectId =
         await projectService.createProject(userId, token, name, colorCode);
-    log("step 2");
     if (projectId != "") getProject(userId, token);
     return projectId;
   }
-  
+
+  Future<bool> deleteProject(String projectId, token, userId) async {
+    bool deleted = await projectService.deleteProject(projectId, token);
+    getProject(userId, token);
+    return deleted;
+  }
+
+  Future<bool> updateProject(
+      String projectId, token, userId, name, color) async {
+    bool updated =
+        await projectService.updateProject(projectId, token, name, color);
+    getProject(userId, token);
+    return updated;
+  }
 
   // Color Option Picker
   int selectedColorIndex = 0;

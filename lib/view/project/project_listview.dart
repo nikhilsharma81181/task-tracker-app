@@ -17,7 +17,8 @@ class ProjectListView extends StatelessWidget {
         List<ProjectModel> projects = prov.projects ?? [];
         return GestureDetector(
           onTap: () {},
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 15),
               Row(
@@ -33,7 +34,11 @@ class ProjectListView extends StatelessWidget {
                       context.read<ProjectProvider>().resetColor();
                       showDialog(
                         context: context,
-                        builder: (context) => const CreateProjectDialog(),
+                        builder: (context) => const CreateProjectDialog(
+                          isCreate: true,
+                          colorCode: '',
+                          text: '',
+                        ),
                       );
                     },
                     child: const Icon(Icons.add),

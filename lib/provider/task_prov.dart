@@ -75,6 +75,7 @@ class TaskProvider extends ChangeNotifier {
   }
 
   resetTaskData() {
+    if (tasks == null) return;
     tasks!.clear();
     toDoTasks!.clear();
     inProgressTasks!.clear();
