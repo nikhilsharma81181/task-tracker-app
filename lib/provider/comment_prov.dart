@@ -32,9 +32,11 @@ class CommentProvider extends ChangeNotifier {
     return data != null ? true : false;
   }
 
-  Future<bool> deleteComments(String userId, commentId, token ,int index) async {
+  Future<bool> deleteComments(
+      String userId, commentId, token, int index) async {
     bool deleted = await commentService.deleteComments(commentId, token);
     comments!.removeAt(index);
+    if (comments!.isEmpty) comments = null;
     return deleted;
   }
 

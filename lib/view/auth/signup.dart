@@ -113,7 +113,7 @@ class _SignUpState extends State<SignUp> {
                 if (_formKey.currentState!.validate()) {
                   if (_passwordCtrl.text == _rePasswordCtrl.text) {
                     if (!isLoading) {
-                      // setState(() => isLoading = true);
+                      setState(() => isLoading = true);
                       final userProv = context.read<UserProvider>();
                       final nav = Navigator.of(context);
                       String res = await userProv.signUp(
